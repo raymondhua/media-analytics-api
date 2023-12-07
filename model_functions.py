@@ -17,10 +17,12 @@ import io
 import decimal
 
 class model_data:
+    def __init__(self, yearStart, yearEnd, test=False):
+        self.models = Models(yearStart, yearEnd, test)
 
     def top_words(self, year, breakID):
         #Opens the model from the loadModels.py
-        model = openModel(year)
+        model = self.models.openModel(year)
         word_vectors = model.wv.index_to_key
         # Gets the length of the model
         model_length = len(word_vectors)
@@ -52,7 +54,7 @@ class model_data:
         data = {}
         data['similarWords'] = []
         # Opens the model from the loadModels.py with the year passing in
-        model = openModel(year)
+        model = self.models.openModel(year)
         # Runs the try and exceptions method
         try:
             # Runs the Gensim function most_similar with the wordToFind function passing in (should return at least 10 words)
@@ -73,7 +75,7 @@ class model_data:
         data = {}
         data['similarity'] = []
         # Opens the model from the loadModels.py with the year passing in
-        model = openModel(year)
+        model = self.models.openModel(year)
         # Cleans the word inputs and stores them into wordInput1 and wordInput2
         wordInput1 = cleanInput(word1)
         wordInput2 = cleanInput(word2)
@@ -94,7 +96,7 @@ class model_data:
         data = {}
         data['notMatch'] = []
         # Opens the model from the loadModels.py with the year passing in
-        model = openModel(year)
+        model = self.models.openModel(year)
         # Converts the string into a list
         wordArray = convertToList(wordString)
         try:
@@ -129,7 +131,7 @@ class model_data:
             'count': int(count),
             'frequency': frequency
         })
-        model = openModel(year)
+        model = self.models.openModel(year)
         # Sets the total word count to 0
         totalWordCount = 0
         # Cleans the word and stores it into wordInput
@@ -155,7 +157,7 @@ class model_data:
         return wordDict
         
     # Function that returns information of a specific word between two years
-    def compare_word_across_years(self, yearFrom, yearTo, word):
+    def compare_word_overtime(self, yearFrom, yearTo, word):
         # Initializes the data dictionary with one key, word initialized to empty list
         data = {}
         # If the yearFrom is less than yearTo it would run the function below
@@ -177,7 +179,7 @@ class model_data:
         data = {}
         data['similarWords'] = []
         # Opens the model from the loadModels.py with the year passing in
-        model = openModel(year)
+        model = self.models.openModel(year)
         # Cleans the arrays
         positiveInput = lowerArray(positive)
         negativeInput = lowerArray(negative)
@@ -227,7 +229,7 @@ class model_data:
             plt.close(fig)
             return buf.getvalue()
         
-        model = openModel(year)
+        model = self.models.openModel(year)
         items = convertToList(words)
         
         return generate_tsne_Image(model, items)
