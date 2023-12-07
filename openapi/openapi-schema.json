@@ -1,0 +1,564 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Media Analytics",
+    "version": "1.0",
+    "description": "Mainly to measure how many times a word is used in The New York Times between 1970 and 2017."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000/api/",
+      "description": "Localhost"
+    },
+    {
+      "url": "http://20.70.173.212:8000/api/",
+      "description": "Production server API"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Overtime",
+      "description": "How many times a word has been used during a period of time"
+    },
+    {
+      "name": "Similar",
+      "description": "How similar a certain word is"
+    },
+    {
+      "name": "TSNE",
+      "description": "A TNSE graph of how close the words are"
+    },
+    {
+      "name": "Top words",
+      "description": "Top words by year"
+    },
+    {
+      "name": "Word",
+      "description": "Specific information of a certain word"
+    },
+    {
+      "name": "XYZ = ?",
+      "description": "What word is next after X, Y and Z"
+    }
+  ],
+  "paths": {
+    "/articles/find/{yearFrom}/{yearTo}/{word}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "yearFrom",
+          "in": "path",
+          "required": true,
+          "description": "Year of where you want to start"
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "yearTo",
+          "in": "path",
+          "required": true,
+          "description": "Year of where you want to end"
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "word",
+          "in": "path",
+          "required": true,
+          "description": "Search for a word"
+        }
+      ],
+      "get": {
+        "summary": "Get overtime usage of a word",
+        "operationId": "get-word-overtime-usage",
+        "description": "Returns information of a certain word over a period of time.",
+        "tags": [
+          "Overtime"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Specific-Word"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/articles/similar/{year}/{word}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "year",
+          "in": "path",
+          "required": true,
+          "description": "Year of when the word was used"
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "word",
+          "in": "path",
+          "required": true,
+          "description": "Enter a word that you want to find similarities with"
+        }
+      ],
+      "get": {
+        "summary": "Get similar word",
+        "operationId": "get-similar-year",
+        "tags": [
+          "Similar"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Similar"
+                }
+              }
+            }
+          }
+        },
+        "description": "Returns what words are similar with the requested word"
+      }
+    },
+    "/articles/topwords/{year}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "year",
+          "in": "path",
+          "required": true,
+          "description": "Year of when the word was used"
+        }
+      ],
+      "get": {
+        "summary": "Get 50 top words by year",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Top-Words"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-topwords-year",
+        "tags": [
+          "Top words"
+        ],
+        "description": "Returns a list of 50 words of a certain year."
+      }
+    },
+    "/articles/topwords/{year}/{break_ID}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "year",
+          "in": "path",
+          "required": true,
+          "description": "Year of when the word was used"
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "break_ID",
+          "in": "path",
+          "required": true,
+          "description": "Number of words"
+        }
+      ],
+      "get": {
+        "summary": "Get a certain amount of top words by year",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Top-Words"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-topwords-year-break",
+        "tags": [
+          "Top words"
+        ],
+        "description": "Returns a list of the number of words of a certain year."
+      }
+    },
+    "/articles/similarity/{year}/{word_1}/{word_2}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "year",
+          "in": "path",
+          "required": true,
+          "description": "Year of when the words was used"
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "word_1",
+          "in": "path",
+          "required": true,
+          "description": "Word to compare with"
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "word_2",
+          "in": "path",
+          "required": true,
+          "description": "Another word to compare with"
+        }
+      ],
+      "get": {
+        "summary": "Get similarity between two words",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Similar"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-articles-similarity",
+        "description": "Check how similar the words are",
+        "tags": [
+          "Similar"
+        ]
+      }
+    },
+    "/articles/word/{year}/{word}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "year",
+          "in": "path",
+          "required": true
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "word",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "get": {
+        "summary": "Find specific word",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Specific-Word"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-articles-word",
+        "tags": [
+          "Word"
+        ],
+        "description": "Finds information about a word"
+      }
+    },
+    "/articles/xyz/{year}/{x}/{y}/{z}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "year",
+          "in": "path",
+          "required": true
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "x",
+          "in": "path",
+          "required": true
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "y",
+          "in": "path",
+          "required": true
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "z",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "get": {
+        "summary": "Get analogies of a word",
+        "tags": [
+          "XYZ = ?"
+        ],
+        "operationId": "get-xyz",
+        "description": "Returns the missing word, alongside the requested ones.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Analogies"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/img/tsne/{year}/{words}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "words",
+          "in": "path",
+          "required": true
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "year",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "get": {
+        "summary": "Your GET endpoint",
+        "tags": [
+          "TSNE"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-tnse",
+        "description": "Returns TSNE graph."
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Analogies": {
+        "type": "object",
+        "properties": {
+          "similarWords": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "x": {
+                  "type": "string"
+                },
+                "y": {
+                  "type": "string"
+                },
+                "z": {
+                  "type": "string"
+                },
+                "word": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-examples": {
+          "example-1": {
+            "similarWords": [
+              {
+                "x": "trump",
+                "y": "clinton",
+                "z": "obama",
+                "word": "first"
+              }
+            ]
+          }
+        }
+      },
+      "Top-Words": {
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "topWords": [
+              {
+                "word": "second",
+                "frequently": 0.1
+              },
+              {
+                "word": "first",
+                "frequently": 0.1
+              }
+            ]
+          }
+        },
+        "properties": {
+          "topWords": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "word": {
+                  "type": "string"
+                },
+                "rank": {
+                  "type": "number"
+                },
+                "frequently": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Specific-Word": {
+        "type": "object",
+        "properties": {
+          "word": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "year": {
+                  "type": "integer"
+                },
+                "word": {
+                  "type": "string"
+                },
+                "rank": {
+                  "type": "integer"
+                },
+                "count": {
+                  "type": "integer"
+                },
+                "frequency": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "code": {
+            "type": "integer"
+          }
+        },
+        "x-examples": {
+          "example-1": {
+            "word": [
+              {
+                "year": 2007,
+                "word": "sarah",
+                "rank": 3,
+                "count": 2,
+                "frequency": 12.5
+              }
+            ],
+            "code": 1
+          }
+        }
+      },
+      "Similar": {
+        "type": "object",
+        "properties": {
+          "similarWords": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "word": {
+                  "type": "string"
+                },
+                "frequently": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "x-examples": {
+          "example-1": {
+            "similarWords": [
+              {
+                "word": "sentence",
+                "frequently": 0.06797593832015991
+              },
+              {
+                "word": "second",
+                "frequently": 0.033640578389167786
+              },
+              {
+                "word": "hard",
+                "frequently": 0.009391162544488907
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

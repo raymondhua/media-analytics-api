@@ -204,8 +204,6 @@ class model_data:
         vocab = list(d)
         X = model.wv[vocab]
         p = 5
-        if len(vocab) < 5:
-            p = len(vocab)-1
         tsne = TSNE(perplexity=p, n_components=2, learning_rate=5, init='pca',random_state=3, n_iter=150000)
         X_tsne = tsne.fit_transform(X)
         df = pd.concat([pd.DataFrame(X_tsne), pd.Series(vocab)], axis=1)

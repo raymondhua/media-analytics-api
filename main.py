@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI
 from fastapi.responses import Response
-from starlette.responses import StreamingResponse
+from pydantic_settings import BaseSettings
 
 # Imports the loadModels.py and cleanInput.py files
 from model_functions import *
@@ -18,6 +18,8 @@ model_data = model_data()
 # @app.get("/items/{item_id}")
 # def read_item(item_id: int, q: Union[str, None] = None):
 #     return {"item_id": item_id, "q": q}
+# class Settings(BaseSettings):
+#     openapi_url: str = "/openapi.json"
 
 @app.get("/words/{year}/{breakID}")
 def top_words(year: int, breakID: int):
